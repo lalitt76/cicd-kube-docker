@@ -1,15 +1,15 @@
 pipeline {
 
     agent any
-/*
-	tools {
-        maven "maven3"
+    tools {
+        maven "MAVEN3"
+        jdk "OracleJDK8"
     }
-*/
+
     environment {
-        registry = "lalitt76/vproappdock"
-        registryCredential = 'dockerhub'
-        JAVA_HOME = "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
+        registryCredential = 'ecr:us-east-1:aws-creds'
+        appRegistry = "970221241904.dkr.ecr.us-east-1.amazonaws.com/vprofileappimg"
+        vprofileRegistry = "https://970221241904.dkr.ecr.us-east-1.amazonaws.com"
     }
 
     stages{
@@ -84,7 +84,7 @@ pipeline {
         stage('Upload Image'){
           steps{
             script {
-              docker.withRegistry('', registryCredential) {
+              docker.withRegistry( vprofileRegistry, registryCredential) {
                 dockerImage.push("V$BUILD_NUMBER")
                 dockerImage.push('latest')
               }
@@ -97,14 +97,5 @@ pipeline {
             sh "docker rmi $registry:V$BUILD_NUMBER"
           }
         }
-
-        stage('Kubernetes Deploy') {
-          agent {label 'KOPS'}
-            steps {
-              sh "helm upgrade --install --force vprofile-stack helm/vprofilecharts --set appimage=${registry}:V${BUILD_NUMBER} --namespace prod"
-            }
-        }
     }
-
-
 }
