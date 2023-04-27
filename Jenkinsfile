@@ -1,15 +1,17 @@
 pipeline {
 
     agent any
-    tools {
+/*    tools {
         maven "MAVEN3"
         jdk "OracleJDK8"
     }
+*/
 
     environment {
         registryCredential = 'ecr:us-east-1:aws-creds'
         appRegistry = "970221241904.dkr.ecr.us-east-1.amazonaws.com/vprofileappimg"
         vprofileRegistry = "https://970221241904.dkr.ecr.us-east-1.amazonaws.com"
+        JAVA_HOME = "/usr/lib/jvm/java-1.8.0-openjdk-amd64"
     }
 
     stages{
